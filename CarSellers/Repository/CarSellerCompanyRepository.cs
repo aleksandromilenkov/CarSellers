@@ -29,7 +29,7 @@ namespace CarSellers.Repository {
         }
 
         public async Task<ICollection<Car>> GetCarsByCompanyId(int companyId) {
-            return await _context.CarSellerCompanies.Where(c => c.CompanyID == companyId).SelectMany(c => c.Cars).ToListAsync();
+            return await _context.CarSellerCompanies.Where(c => c.CompanyID == companyId).SelectMany(c => c.Cars).Include(c => c.CarSellerCompany).Include(c => c.CarModel).ThenInclude(cm => cm.Manufacturer).ToListAsync();
         }
 
         public async Task<CarSellerCompany?> GetCompanyById(int id) {

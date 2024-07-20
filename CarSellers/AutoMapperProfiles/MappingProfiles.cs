@@ -9,6 +9,10 @@ namespace CarSellers.AutoMapperProfiles {
             CreateMap<CompanyCreationDTO, CarSellerCompany>().ReverseMap();
             CreateMap<CarCreationDTO, Car>().ReverseMap();
             CreateMap<CarDTO, Car>().ReverseMap();
+            CreateMap<CarModelDTO, CarModel>().ReverseMap();
+            CreateMap<CarModelCreationDTO, CarModel>().ReverseMap();
+            CreateMap<ManufacturerDTO, Manufacturer>().ReverseMap();
+            CreateMap<ManufacturerCreationDTO, Manufacturer>().ReverseMap();
         }
     }
 }

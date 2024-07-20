@@ -68,7 +68,7 @@ namespace CarSellers.Controllers {
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateCompany([FromRoute] int carId, [FromBody] CarCreationDTO car) {
+        public async Task<IActionResult> UpdateCar([FromRoute] int carId, [FromBody] CarCreationDTO car) {
             if (car == null) {
                 return BadRequest(ModelState);
             }
@@ -93,7 +93,7 @@ namespace CarSellers.Controllers {
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
-        public async Task<IActionResult> DeleteCompany(int carId) {
+        public async Task<IActionResult> DeleteCar(int carId) {
             if (!await _carRepository.CarExists(carId)) {
                 return NotFound();
             }
