@@ -17,8 +17,8 @@ namespace CarSellers {
                 var company2 = new CarSellerCompany { CompanyName = "Auto Welt", Address = "Ul. Nikola Karev 22, Kocani" };
                 dataContext.CarSellerCompanies.Add(company);
 
-                var toyota = new Manufacturer { ManufacturerName = "Toyota" };
-                var ford = new Manufacturer { ManufacturerName = "Ford" };
+                var toyota = new Manufacturer { ManufacturerName = "Toyota", Country = "Japan" };
+                var ford = new Manufacturer { ManufacturerName = "Ford", Country = "USA" };
                 dataContext.Manufacturers.AddRange(toyota, ford);
 
                 var corolla = new CarModel { ModelName = "Corolla", Manufacturer = toyota };
@@ -27,25 +27,15 @@ namespace CarSellers {
                 dataContext.CarModels.AddRange(corolla, avensis, mustang);
 
                 dataContext.Cars.AddRange(
-                    new Car { CarSellerCompany = company, CarModel = corolla, Year = 2020, Kilometers = 200000, Price = 12000 },
-                    new Car { CarSellerCompany = company, CarModel = avensis, Year = 2021, Kilometers = 250000, Price = 10000 },
-                    new Car { CarSellerCompany = company2, CarModel = mustang, Year = 2019, Kilometers = 300000, Price = 20000 }
+                    new Car { CarSellerCompany = company, CarType = Enums.CarType.Sedan, CarColor = Enums.CarColor.Gray, CarModel = corolla, Year = 2020, Kilometers = 200000, Price = 12000 },
+                    new Car { CarSellerCompany = company, CarType = Enums.CarType.Hatchback, CarColor = Enums.CarColor.White, CarModel = avensis, Year = 2021, Kilometers = 250000, Price = 10000 },
+                    new Car { CarSellerCompany = company2, CarType = Enums.CarType.SportsCar, CarColor = Enums.CarColor.Black, CarModel = mustang, Year = 2019, Kilometers = 300000, Price = 20000 }
                 );
 
                 dataContext.SaveChanges();
 
             }
-            var manufacturerToUpdate = dataContext.Manufacturers.FirstOrDefault(m => m.ManufacturerName == "Ford");
-            if (manufacturerToUpdate != null) {
-                manufacturerToUpdate.Country = "USA";
-                dataContext.SaveChanges();
-            }
 
-            var manufacturerToUpdate2 = dataContext.Manufacturers.FirstOrDefault(m => m.ManufacturerName == "Toyota");
-            if (manufacturerToUpdate2 != null) {
-                manufacturerToUpdate2.Country = "Japan";
-                dataContext.SaveChanges();
-            }
         }
     }
 }

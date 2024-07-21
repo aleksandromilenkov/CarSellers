@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CarSellers.DTO;
+using CarSellers.Helpers;
 using CarSellers.Interface;
 using CarSellers.Model;
 using Microsoft.AspNetCore.Mvc;
@@ -19,8 +20,8 @@ namespace CarSellers.Controllers {
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Car>))]
-        public async Task<IActionResult> GetCars() {
-            var cars = await _carRepository.GetAllCars();
+        public async Task<IActionResult> GetCars([FromQuery] CarQueryObject carQueryObject) {
+            var cars = await _carRepository.GetAllCars(carQueryObject);
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
