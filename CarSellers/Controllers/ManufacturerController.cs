@@ -2,6 +2,7 @@
 using CarSellers.DTO;
 using CarSellers.Interface;
 using CarSellers.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarSellers.Controllers {
@@ -19,6 +20,7 @@ namespace CarSellers.Controllers {
 
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<ManufacturerDTO>))]
+        [Authorize]
         public async Task<IActionResult> GetManufacturers() {
             var manufacturers = await _manufactorerRepository.GetAllManufacturers();
             if (!ModelState.IsValid) {

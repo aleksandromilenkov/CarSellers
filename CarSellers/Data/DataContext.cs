@@ -1,8 +1,10 @@
 ﻿using CarSellers.Model;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarSellers.Data {
-    public class DataContext : DbContext {
+    public class DataContext : IdentityDbContext<AppUser> {
         public DataContext(DbContextOptions<DataContext> options) : base(options) {
 
         }
@@ -13,9 +15,21 @@ namespace CarSellers.Data {
         public DbSet<CarSellerCompany> CarSellerCompanies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<CarSellerCompany>().HasMany(csc => csc.Cars).WithOne(c => c.CarSellerCompany).HasForeignKey(c => c.CompanyID);
             modelBuilder.Entity<Manufacturer>().HasMany(m => m.CarModels).WithOne(cm => cm.Manufacturer).HasForeignKey(cm => cm.ManufacturerID);
             modelBuilder.Entity<CarModel>().HasMany(cm => cm.Cars).WithOne(c => c.CarModel).HasForeignKey(c => c.ModelID);
+            List<IdentityRole> roles = new List<IdentityRole>{
+                new IdentityRole{
+                    Name="Admin",
+                    NormalizedName="ADMIN"
+                },
+                new IdentityRole{
+                    Name="User",
+                    NormalizedName="USER"
+                }
+            };
+            modelBuilder.Entity<IdentityRole>().HasData(roles);
         }
 
     }
