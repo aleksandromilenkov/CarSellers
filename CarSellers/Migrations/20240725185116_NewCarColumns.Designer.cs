@@ -4,6 +4,7 @@ using CarSellers.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarSellers.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240725185116_NewCarColumns")]
+    partial class NewCarColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,21 +89,6 @@ namespace CarSellers.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("CarSellers.Model.AppUserCars", b =>
-                {
-                    b.Property<string>("AppUserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("CarId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AppUserId", "CarId");
-
-                    b.HasIndex("CarId");
-
-                    b.ToTable("AppUserCars");
-                });
-
             modelBuilder.Entity("CarSellers.Model.Car", b =>
                 {
                     b.Property<int>("CarID")
@@ -111,9 +98,6 @@ namespace CarSellers.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarID"), 1L, 1);
 
                     b.Property<int>("CarColor")
-                        .HasColumnType("int");
-
-                    b.Property<int>("CarOwner")
                         .HasColumnType("int");
 
                     b.Property<int>("CarRegistration")
@@ -237,15 +221,15 @@ namespace CarSellers.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "27b63310-550b-401b-b101-95b9afdff9e8",
-                            ConcurrencyStamp = "2b70e8c5-ccc5-432b-99ba-ba8173be531d",
+                            Id = "b2934938-9c16-4ad5-8649-01b8fb32b461",
+                            ConcurrencyStamp = "0a951bdd-d605-4205-bbf8-b2135fc9eaa1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4b1ce9df-fa3b-4a9b-b4fe-a62379a73941",
-                            ConcurrencyStamp = "ae02ae2c-1571-4e7e-a8e6-3b6986d618bc",
+                            Id = "0de6bb37-85cb-4750-a9b5-a0fd5a6cbbc8",
+                            ConcurrencyStamp = "d1972e3b-c7ce-4bdd-86d9-ca1a542ebe0e",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -357,25 +341,6 @@ namespace CarSellers.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CarSellers.Model.AppUserCars", b =>
-                {
-                    b.HasOne("CarSellers.Model.AppUser", "AppUser")
-                        .WithMany("UserCars")
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CarSellers.Model.Car", "Car")
-                        .WithMany("UserCars")
-                        .HasForeignKey("CarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-
-                    b.Navigation("Car");
-                });
-
             modelBuilder.Entity("CarSellers.Model.Car", b =>
                 {
                     b.HasOne("CarSellers.Model.CarSellerCompany", "CarSellerCompany")
@@ -455,16 +420,6 @@ namespace CarSellers.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("CarSellers.Model.AppUser", b =>
-                {
-                    b.Navigation("UserCars");
-                });
-
-            modelBuilder.Entity("CarSellers.Model.Car", b =>
-                {
-                    b.Navigation("UserCars");
                 });
 
             modelBuilder.Entity("CarSellers.Model.CarModel", b =>

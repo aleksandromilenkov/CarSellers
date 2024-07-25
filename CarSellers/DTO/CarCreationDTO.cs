@@ -8,6 +8,8 @@ namespace CarSellers.DTO {
         public int ModelID { get; set; }
         public CarType CarType { get; set; }
         public CarColor CarColor { get; set; }
+        public CarOwner CarOwner { get; set; }
+        public CarRegistration CarRegistration { get; set; }
         public int CompanyID { get; set; }
     }
 }

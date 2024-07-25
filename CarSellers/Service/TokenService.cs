@@ -18,7 +18,7 @@ namespace CarSellers.Service {
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, appUser.Email),
-                new Claim(JwtRegisteredClaimNames.GivenName, appUser.UserName)
+                new Claim(JwtRegisteredClaimNames.Name, appUser.UserName)
             };
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptior = new SecurityTokenDescriptor {

@@ -42,6 +42,18 @@ namespace CarSellers.Repository {
             if (!string.IsNullOrWhiteSpace(carQueryObject.PriceFrom.ToString()) && !string.IsNullOrWhiteSpace(carQueryObject.PriceTo.ToString())) {
                 cars = cars.Where(c => c.Price >= carQueryObject.PriceFrom && c.Price <= carQueryObject.PriceTo);
             }
+            if (carQueryObject.CarColor != null) {
+                cars = cars.Where(c => c.CarColor == carQueryObject.CarColor);
+            }
+            if (carQueryObject.CarType != null) {
+                cars = cars.Where(c => c.CarType == carQueryObject.CarType);
+            }
+            if (carQueryObject.CarRegistration != null) {
+                cars = cars.Where(c => c.CarRegistration == carQueryObject.CarRegistration);
+            }
+            if (carQueryObject.CarOwner != null) {
+                cars = cars.Where(c => c.CarOwner == carQueryObject.CarOwner);
+            }
             if (!string.IsNullOrWhiteSpace(carQueryObject.SortBy)) {
                 if (carQueryObject.SortBy.Equals("Price", StringComparison.OrdinalIgnoreCase)) {
                     cars = carQueryObject.IsDescending ? cars.OrderByDescending(c => c.Price) : cars.OrderBy(c => c.Price);

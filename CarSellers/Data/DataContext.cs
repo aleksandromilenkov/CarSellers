@@ -13,6 +13,7 @@ namespace CarSellers.Data {
         public DbSet<Manufacturer> Manufacturers { get; set; }
         public DbSet<CarModel> CarModels { get; set; }
         public DbSet<CarSellerCompany> CarSellerCompanies { get; set; }
+        public DbSet<AppUserCars> AppUserCars { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
@@ -29,7 +30,20 @@ namespace CarSellers.Data {
                     NormalizedName="USER"
                 }
             };
+            modelBuilder.Entity<AppUserCars>()
+           .HasKey(uc => new { uc.AppUserId, uc.CarId });
+
+            modelBuilder.Entity<AppUserCars>()
+                .HasOne(uc => uc.AppUser)
+                .WithMany(u => u.UserCars)
+                .HasForeignKey(uc => uc.AppUserId);
+
+            modelBuilder.Entity<AppUserCars>()
+                .HasOne(uc => uc.Car)
+                .WithMany(c => c.UserCars)
+                .HasForeignKey(uc => uc.CarId);
             modelBuilder.Entity<IdentityRole>().HasData(roles);
+
         }
 
     }

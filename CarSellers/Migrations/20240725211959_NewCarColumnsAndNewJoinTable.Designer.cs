@@ -4,6 +4,7 @@ using CarSellers.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarSellers.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240725211959_NewCarColumnsAndNewJoinTable")]
+    partial class NewCarColumnsAndNewJoinTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -237,15 +239,15 @@ namespace CarSellers.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "27b63310-550b-401b-b101-95b9afdff9e8",
-                            ConcurrencyStamp = "2b70e8c5-ccc5-432b-99ba-ba8173be531d",
+                            Id = "ce1d7f8a-7611-420b-85a5-2cd4ec29cb32",
+                            ConcurrencyStamp = "18120e81-a8c7-4519-a549-c515c07358b1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "4b1ce9df-fa3b-4a9b-b4fe-a62379a73941",
-                            ConcurrencyStamp = "ae02ae2c-1571-4e7e-a8e6-3b6986d618bc",
+                            Id = "288d3de9-eeff-4058-9b06-643e583f90bc",
+                            ConcurrencyStamp = "1d48986a-fee1-4a24-a1c0-8d18ef3a5dde",
                             Name = "User",
                             NormalizedName = "USER"
                         });
