@@ -28,7 +28,6 @@ namespace CarSellers.Service {
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptior = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity(claims),
-                Claims = (IDictionary<string, object>)claims,
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds,
                 Issuer = _config["JWT:Issuer"],
