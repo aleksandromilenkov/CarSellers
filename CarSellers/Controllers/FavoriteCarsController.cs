@@ -21,6 +21,9 @@ namespace CarSellers.Controllers {
         [HttpGet(Name = "GetUserFavoriteCar")]
         [Authorize]
         public async Task<IActionResult> GetAppUserFavoriteCars() {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             var username = User.Identity.Name;
             if (string.IsNullOrEmpty(username)) {
                 return Unauthorized("User not found.");
@@ -33,6 +36,9 @@ namespace CarSellers.Controllers {
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> CrteateUserFavoriteCar(int carId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             var username = User.Identity.Name;
             if (string.IsNullOrEmpty(username)) {
                 return Unauthorized("User not found.");
@@ -57,9 +63,12 @@ namespace CarSellers.Controllers {
             }
         }
 
-        [HttpDelete("{symbol}")]
+        [HttpDelete("{carId:int}")]
         [Authorize]
         public async Task<IActionResult> DeleteUserPortfolio([FromRoute] int carId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             var username = User.Identity.Name;
             if (string.IsNullOrEmpty(username)) {
                 return Unauthorized("User not found.");

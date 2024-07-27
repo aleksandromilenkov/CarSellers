@@ -1,5 +1,6 @@
 ﻿using CarSellers.Interface;
 using CarSellers.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,20 +10,25 @@ namespace CarSellers.Service {
     public class TokenService : ITokenService {
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _key;
+        private readonly UserManager<AppUser> _userManager;
 
-        public TokenService(IConfiguration configuration) {
+        public TokenService(IConfiguration configuration, UserManager<AppUser> userManager) {
             _config = configuration;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
+            _userManager = userManager;
         }
-        public string CreateToken(AppUser appUser) {
+        public async Task<string> CreateToken(AppUser appUser) {
+            var userRoles = await _userManager.GetRolesAsync(appUser);
+            var roleClaims = userRoles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Email, appUser.Email),
                 new Claim(JwtRegisteredClaimNames.Name, appUser.UserName)
-            };
+            }.Union(roleClaims);
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
             var tokenDescriptior = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity(claims),
+                Claims = (IDictionary<string, object>)claims,
                 Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds,
                 Issuer = _config["JWT:Issuer"],

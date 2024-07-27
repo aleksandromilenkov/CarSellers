@@ -18,39 +18,42 @@ namespace CarSellers.Controllers {
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<CompanyDTO>))]
         public async Task<IActionResult> GetCompanies() {
-            var carSellerCompanies = await _companyRepository.GetAllCompanies();
-            var companiesToDisplay = _mapper.Map<List<CompanyDTO>>(carSellerCompanies);
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            var carSellerCompanies = await _companyRepository.GetAllCompanies();
+            var companiesToDisplay = _mapper.Map<List<CompanyDTO>>(carSellerCompanies);
+
             return Ok(companiesToDisplay);
         }
 
-        [HttpGet("{companyId}", Name = "GetCompany")]
+        [HttpGet("{companyId:int}", Name = "GetCompany")]
         [ProducesResponseType(200, Type = typeof(CompanyDTO))]
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetCompanyById(int companyId) {
-            if (!await _companyRepository.CompanyExists(companyId)) {
-                return NotFound();
-            }
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            if (!await _companyRepository.CompanyExists(companyId)) {
+                return NotFound();
+            }
+
             var company = await _companyRepository.GetCompanyById(companyId);
             var companyToDisplay = _mapper.Map<CompanyDTO>(company);
             return Ok(companyToDisplay);
         }
 
-        [HttpGet("cars/{companyId}", Name = "GetCarsByCompanyId")]
+        [HttpGet("cars/{companyId:int}", Name = "GetCarsByCompanyId")]
         [ProducesResponseType(200, Type = typeof(List<CarDTO>))]
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetCarsByCompanyId([FromRoute] int companyId) {
-            if (!await _companyRepository.CompanyExists(companyId)) {
-                return NotFound();
-            }
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            if (!await _companyRepository.CompanyExists(companyId)) {
+                return NotFound();
+            }
+
             var cars = await _companyRepository.GetCarsByCompanyId(companyId);
             var carsToDisplay = _mapper.Map<List<CarDTO>>(cars);
             return Ok(carsToDisplay);
@@ -104,19 +107,20 @@ namespace CarSellers.Controllers {
             return NoContent();
 
         }
-        [HttpDelete("{companyId}")]
+        [HttpDelete("{companyId:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteCompany(int companyId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             if (!await _companyRepository.CompanyExists(companyId)) {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
+
             CarSellerCompany company = await _companyRepository.GetCompanyById(companyId);
             if (!await _companyRepository.DeleteCompany(company)) {
                 ModelState.AddModelError("", "Something went wrong with the deleting");

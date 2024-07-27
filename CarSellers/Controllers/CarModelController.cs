@@ -20,26 +20,28 @@ namespace CarSellers.Controllers {
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<CarModelDTO>))]
         public async Task<IActionResult> GetCarModels() {
-            var carModels = await _carModelRepository.GetAllCarModels();
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            var carModels = await _carModelRepository.GetAllCarModels();
+
             IEnumerable<CarModelDTO> carModelsToReturn = _mapper.Map<IEnumerable<CarModelDTO>>(carModels);
             return Ok(carModelsToReturn);
         }
 
 
-        [HttpGet("{carModelId}", Name = "GetCarModel")]
+        [HttpGet("{carModelId:int}", Name = "GetCarModel")]
         [ProducesResponseType(200, Type = typeof(CarModelDTO))]
         public async Task<IActionResult> GetCarModelById([FromRoute] int carModelId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             var carModel = await _carModelRepository.GetCarModelById(carModelId);
             if (carModel == null) {
                 ModelState.AddModelError("", "CarModel Not found");
                 return NotFound();
             }
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
+
             CarModelDTO carModelToReturn = _mapper.Map<CarModelDTO>(carModel);
             return Ok(carModelToReturn);
         }
@@ -64,7 +66,7 @@ namespace CarSellers.Controllers {
         }
 
 
-        [HttpPut("{carModelId}")]
+        [HttpPut("{carModelId:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -88,19 +90,20 @@ namespace CarSellers.Controllers {
         }
 
 
-        [HttpDelete("{carModelId}")]
+        [HttpDelete("{carModelId:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteCarModel(int carModelId) {
-            if (!await _carModelRepository.CarModelExists(carModelId)) {
-                return NotFound();
-            }
 
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            if (!await _carModelRepository.CarModelExists(carModelId)) {
+                return NotFound();
+            }
+
             CarModel? carModel = await _carModelRepository.GetCarModelById(carModelId);
             if (carModel == null) {
                 return NotFound();

@@ -21,26 +21,28 @@ namespace CarSellers.Controllers {
         [HttpGet]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Car>))]
         public async Task<IActionResult> GetCars([FromQuery] CarQueryObject carQueryObject) {
-            var cars = await _carRepository.GetAllCars(carQueryObject);
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            var cars = await _carRepository.GetAllCars(carQueryObject);
+
             IEnumerable<CarDTO> carsToReturn = _mapper.Map<IEnumerable<CarDTO>>(cars);
             return Ok(carsToReturn);
         }
 
 
-        [HttpGet("{carId}", Name = "GetCar")]
+        [HttpGet("{carId:int}", Name = "GetCar")]
         [ProducesResponseType(200, Type = typeof(CarDTO))]
         public async Task<IActionResult> GetCarById([FromRoute] int carId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             var car = await _carRepository.GetCarById(carId);
             if (car == null) {
                 ModelState.AddModelError("", "Car Not found");
                 return NotFound();
             }
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
+
             CarDTO carToReturn = _mapper.Map<CarDTO>(car);
             return Ok(carToReturn);
         }
@@ -65,15 +67,15 @@ namespace CarSellers.Controllers {
         }
 
 
-        [HttpPut("{carId}")]
+        [HttpPut("{carId:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateCar([FromRoute] int carId, [FromBody] CarCreationDTO car) {
-            if (car == null) {
+            if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
-            if (!ModelState.IsValid) {
+            if (car == null) {
                 return BadRequest(ModelState);
             }
             if (!await _carRepository.CarExists(carId)) {
@@ -89,19 +91,20 @@ namespace CarSellers.Controllers {
         }
 
 
-        [HttpDelete("{carId}")]
+        [HttpDelete("{carId:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteCar(int carId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             if (!await _carRepository.CarExists(carId)) {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
+
             Car? car = await _carRepository.GetCarById(carId);
             if (car == null) {
                 return NotFound();

@@ -22,26 +22,28 @@ namespace CarSellers.Controllers {
         [ProducesResponseType(200, Type = typeof(IEnumerable<ManufacturerDTO>))]
         [Authorize]
         public async Task<IActionResult> GetManufacturers() {
-            var manufacturers = await _manufactorerRepository.GetAllManufacturers();
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
+            var manufacturers = await _manufactorerRepository.GetAllManufacturers();
+
             IEnumerable<ManufacturerDTO> manufacturersToReturn = _mapper.Map<IEnumerable<ManufacturerDTO>>(manufacturers);
             return Ok(manufacturersToReturn);
         }
 
 
-        [HttpGet("{manufacturerId}", Name = "GetManufacturer")]
+        [HttpGet("{manufacturerId:int}", Name = "GetManufacturer")]
         [ProducesResponseType(200, Type = typeof(ManufacturerDTO))]
         public async Task<IActionResult> GetManufacturerById([FromRoute] int manufacturerId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             var manufacturer = await _manufactorerRepository.GetManufacturerById(manufacturerId);
             if (manufacturer == null) {
                 ModelState.AddModelError("", "Manufacturer Not found");
                 return NotFound();
             }
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
+
             ManufacturerDTO manufacturerToReturn = _mapper.Map<ManufacturerDTO>(manufacturer);
             return Ok(manufacturerToReturn);
         }
@@ -66,7 +68,7 @@ namespace CarSellers.Controllers {
         }
 
 
-        [HttpPut("{manufacturerId}")]
+        [HttpPut("{manufacturerId:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
@@ -90,19 +92,20 @@ namespace CarSellers.Controllers {
         }
 
 
-        [HttpDelete("{manufacturerId}")]
+        [HttpDelete("{manufacturerId:int}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         [ProducesResponseType(500)]
         public async Task<IActionResult> DeleteManufacturer(int manufacturerId) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             if (!await _manufactorerRepository.ManufacturerExists(manufacturerId)) {
                 return NotFound();
             }
 
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
+
             Manufacturer? manufacturer = await _manufactorerRepository.GetManufacturerById(manufacturerId);
             if (manufacturer == null) {
                 return NotFound();

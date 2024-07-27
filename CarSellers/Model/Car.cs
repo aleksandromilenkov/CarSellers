@@ -12,10 +12,10 @@ namespace CarSellers.Model {
         public int CompanyID { get; set; }
         public int Year { get; set; }
         public int Kilometers { get; set; }
-        public CarType CarType { get; set; } = CarType.Sedan;
-        public CarColor CarColor { get; set; }
-        public CarRegistration CarRegistration { get; set; }
-        public CarOwner CarOwner { get; set; }
+        public CarType? CarType { get; set; }
+        public CarColor? CarColor { get; set; }
+        public CarRegistration? CarRegistration { get; set; }
+        public CarOwner? CarOwner { get; set; }
         public decimal Price { get; set; }
         public CarModel? CarModel { get; set; }
         public CarSellerCompany? CarSellerCompany { get; set; }

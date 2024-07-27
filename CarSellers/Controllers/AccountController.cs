@@ -44,7 +44,7 @@ namespace CarSellers.Controllers {
                             new AccountReturnDTO {
                                 UserName = appUser.UserName,
                                 Email = appUser.Email,
-                                Token = _tokenService.CreateToken(appUser)
+                                Token = await _tokenService.CreateToken(appUser)
                             }
                         );
                     }
@@ -78,13 +78,16 @@ namespace CarSellers.Controllers {
             var userToReturn = new AccountReturnDTO {
                 UserName = user.UserName,
                 Email = user.Email,
-                Token = _tokenService.CreateToken(user)
+                Token = await _tokenService.CreateToken(user)
             };
             return Ok(userToReturn);
         }
         [HttpPost("assignRole")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<IActionResult> AssignRole([FromBody] RoleAssignDTO model) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
             var user = await _userManager.FindByIdAsync(model.UserId);
             if (user == null) {
                 return NotFound("User not found");

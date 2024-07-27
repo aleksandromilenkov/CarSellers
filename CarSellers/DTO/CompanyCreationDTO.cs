@@ -1,6 +1,14 @@
-﻿namespace CarSellers.DTO {
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace CarSellers.DTO {
     public class CompanyCreationDTO {
-        public string? CompanyName { get; set; }
-        public string? Address { get; set; }
+        [Required]
+        [MinLength(2, ErrorMessage = "CompanyName must be at least 2 chracters")]
+        [MaxLength(65, ErrorMessage = "CompanyName must be maximum 65 characters")]
+        public string CompanyName { get; set; }
+        [Required]
+        [MinLength(2, ErrorMessage = "Address must be at least 2 chracters")]
+        [MaxLength(65, ErrorMessage = "Address must be maximum 65 characters")]
+        public string Address { get; set; }
     }
 }
