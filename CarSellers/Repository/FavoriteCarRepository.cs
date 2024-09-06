@@ -24,21 +24,21 @@ namespace CarSellers.Repository {
         }
 
         public async Task<Car> GetUserFavoriteCarByCarId(int carId) {
-            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.CarId == carId)).Include(c => c.CarModel).FirstOrDefaultAsync();
+            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.CarId == carId)).Include(c => c.CarModel).ThenInclude(cm => cm.Manufacturer).FirstOrDefaultAsync();
         }
 
         public async Task<Car> GetUserFavoriteCar(string userId, int carId) {
-            return await _context.AppUserCars.Where(uc => uc.AppUserId == userId && uc.CarId == carId).Select(ac=>ac.Car).Include(c=>c.CarModel).FirstOrDefaultAsync();
+            return await _context.AppUserCars.Where(uc => uc.AppUserId == userId && uc.CarId == carId).Select(ac=>ac.Car).Include(c=>c.CarModel).ThenInclude(cm => cm.Manufacturer).FirstOrDefaultAsync();
 
         }
 
         public async Task<List<Car>> GetUserFavoriteCars(AppUser user) {
-            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.AppUserId == user.Id)).Include(c => c.CarModel).Include(c=>c.CarSellerCompany).ToListAsync();
+            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.AppUserId == user.Id)).Include(c => c.CarModel).ThenInclude(cm=>cm.Manufacturer).Include(c=>c.CarSellerCompany).ToListAsync();
 
         }
 
         public async Task<Car> GetUserFavoriteCarByUserId(string userId) {
-            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.AppUserId == userId)).Include(c => c.CarModel).FirstOrDefaultAsync();
+            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.AppUserId == userId)).Include(c => c.CarModel).ThenInclude(cm => cm.Manufacturer).FirstOrDefaultAsync();
         }
     }
 }
