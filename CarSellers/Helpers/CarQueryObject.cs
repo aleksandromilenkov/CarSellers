@@ -2,6 +2,7 @@
 
 namespace CarSellers.Helpers {
     public class CarQueryObject {
+        public string? ManufacturerName { get; set; }
         public string? CompanyName { get; set; }
         public string? ModelName { get; set; }
         public int? Year { get; set; }
@@ -12,7 +13,7 @@ namespace CarSellers.Helpers {
         public string? SortBy { get; set; } = null;
         public bool IsDescending { get; set; } = false;
         public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 1;
+        public int PageSize { get; set; } = 10;
         public CarType? CarType { get; set; }
         public CarColor? CarColor { get; set; }
         public CarRegistration? CarRegistration { get; set; }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace CarSellers.Controllers {
     [Route("api/[controller]")]
@@ -92,7 +93,6 @@ namespace CarSellers.Controllers {
             if (user == null) {
                 return NotFound("User not found");
             }
-
             var roleExists = await _roleManager.RoleExistsAsync(model.Role);
             if (!roleExists) {
                 return BadRequest("Role does not exist");
@@ -104,6 +104,60 @@ namespace CarSellers.Controllers {
             }
 
             return Ok("Role assigned successfully");
+        }
+        [HttpPatch("update")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDTO updateUserDto)
+        {
+            if (updateUserDto == null)
+            {
+                return BadRequest("Invalid user data.");
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Assuming user ID is in claims
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            // Update email
+            if (!string.IsNullOrEmpty(updateUserDto.Email) && user.Email != updateUserDto.Email)
+            {
+                var emailChangeResult = await _userManager.SetEmailAsync(user, updateUserDto.Email);
+                if (!emailChangeResult.Succeeded)
+                {
+                    return BadRequest("Failed to update email.");
+                }
+            }
+
+            // Update username
+            if (!string.IsNullOrEmpty(updateUserDto.Username) && user.UserName != updateUserDto.Username)
+            {
+                var usernameChangeResult = await _userManager.SetUserNameAsync(user, updateUserDto.Username);
+                if (!usernameChangeResult.Succeeded)
+                {
+                    return BadRequest("Failed to update username.");
+                }
+            }
+
+            // Update password if provided
+            if (!string.IsNullOrEmpty(updateUserDto.CurrentPassword) && !string.IsNullOrEmpty(updateUserDto.NewPassword))
+            {
+                var passwordChangeResult = await _userManager.ChangePasswordAsync(user, updateUserDto.CurrentPassword, updateUserDto.NewPassword);
+                if (!passwordChangeResult.Succeeded)
+                {
+                    return BadRequest(passwordChangeResult.Errors);
+                }
+            }
+           var updatedUser =await  _userManager.FindByNameAsync(user.UserName);
+            var userReturnDTO = new UserUpdateReturnDTO
+            {
+                Username = updatedUser.UserName,
+                Email = updatedUser.Email,
+            };
+            return Ok(userReturnDTO);
         }
     }
 }

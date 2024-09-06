@@ -30,7 +30,7 @@ namespace CarSellers.Controllers {
             return Ok(carsToReturn);
         }
 
-
+            
         [HttpGet("{carId:int}", Name = "GetCar")]
         [ProducesResponseType(200, Type = typeof(CarDTO))]
         public async Task<IActionResult> GetCarById([FromRoute] int carId) {

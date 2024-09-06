@@ -26,7 +26,11 @@ namespace CarSellers.Repository {
         }
 
         public async Task<ICollection<Car>> GetAllCars(CarQueryObject carQueryObject) {
-            IQueryable<Car> cars = _context.Cars.Include(c => c.CarSellerCompany).Include(c => c.CarModel).AsQueryable();
+            IQueryable<Car> cars = _context.Cars.Include(c => c.CarSellerCompany).Include(c => c.CarModel).ThenInclude(m=>m.Manufacturer).AsQueryable();
+            if (!string.IsNullOrWhiteSpace(carQueryObject.ManufacturerName))
+            {
+                cars = cars.Where(c => c.CarModel.Manufacturer.ManufacturerName.Trim().ToLower() == carQueryObject.ManufacturerName.Trim().ToLower());
+            }
             if (!string.IsNullOrWhiteSpace(carQueryObject.CompanyName)) {
                 cars = cars.Where(c => c.CarSellerCompany.CompanyName.Trim().ToLower() == carQueryObject.CompanyName.Trim().ToLower());
             }
@@ -39,8 +43,11 @@ namespace CarSellers.Repository {
             if (!string.IsNullOrWhiteSpace(carQueryObject.KilometersFrom.ToString()) && !string.IsNullOrWhiteSpace(carQueryObject.KilometersTo.ToString())) {
                 cars = cars.Where(c => c.Kilometers >= carQueryObject.KilometersFrom && c.Kilometers <= carQueryObject.KilometersTo);
             }
-            if (!string.IsNullOrWhiteSpace(carQueryObject.PriceFrom.ToString()) && !string.IsNullOrWhiteSpace(carQueryObject.PriceTo.ToString())) {
-                cars = cars.Where(c => c.Price >= carQueryObject.PriceFrom && c.Price <= carQueryObject.PriceTo);
+            if (!string.IsNullOrWhiteSpace(carQueryObject.PriceFrom.ToString())) {
+                cars = cars.Where(c => c.Price >= carQueryObject.PriceFrom);
+            }
+            if (!string.IsNullOrWhiteSpace(carQueryObject.PriceTo.ToString())) {
+                cars = cars.Where(c => c.Price <= carQueryObject.PriceTo);
             }
             if (carQueryObject.CarColor != null) {
                 cars = cars.Where(c => c.CarColor == carQueryObject.CarColor);
@@ -70,7 +77,7 @@ namespace CarSellers.Repository {
         }
 
         public async Task<Car?> GetCarById(int id) {
-            return await _context.Cars.Where(c => c.CarID == id).Include(c => c.CarSellerCompany).Include(c => c.CarModel).FirstOrDefaultAsync();
+            return await _context.Cars.Where(c => c.CarID == id).Include(c => c.CarSellerCompany).Include(c => c.CarModel).ThenInclude(m=>m.Manufacturer).FirstOrDefaultAsync();
         }
 
         public async Task<bool> Save() {

@@ -1,4 +1,6 @@
-﻿using CarSellers.Interface;
+﻿using AutoMapper;
+using CarSellers.DTO;
+using CarSellers.Interface;
 using CarSellers.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,15 +12,18 @@ namespace CarSellers.Controllers {
     public class FavoriteCarsController : ControllerBase {
         private readonly UserManager<AppUser> _userManager;
         private readonly IFavoriteCarsRepository _favoriteCarsRepository;
-        private readonly ICarRepository _carRepository;
+        private readonly ICarRepository _carRepository; private readonly IMapper _mapper;
 
-        public FavoriteCarsController(UserManager<AppUser> userManager, IFavoriteCarsRepository favoriteCarsRepository, ICarRepository carRepository) {
+        public FavoriteCarsController(UserManager<AppUser> userManager, IFavoriteCarsRepository favoriteCarsRepository, ICarRepository carRepository, IMapper mapper) {
             this._favoriteCarsRepository = favoriteCarsRepository;
             _userManager = userManager;
             _carRepository = carRepository;
+            this._mapper = mapper;
         }
 
         [HttpGet(Name = "GetUserFavoriteCar")]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<CarDTO>))]
+        [ProducesResponseType(401)]
         [Authorize]
         public async Task<IActionResult> GetAppUserFavoriteCars() {
             if (!ModelState.IsValid) {
@@ -30,10 +35,12 @@ namespace CarSellers.Controllers {
             }
             var appUser = await _userManager.FindByNameAsync(username);
             var userFavoriteCars = await _favoriteCarsRepository.GetUserFavoriteCars(appUser);
-            return Ok(userFavoriteCars);
+            var mappedToDtos = _mapper.Map<List<CarDTO>>(userFavoriteCars);
+            return Ok(mappedToDtos);
         }
 
         [HttpPost]
+        [ProducesResponseType(401)]
         [Authorize]
         public async Task<IActionResult> CrteateUserFavoriteCar(int carId) {
             if (!ModelState.IsValid) {

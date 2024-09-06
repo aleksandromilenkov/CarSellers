@@ -16,27 +16,29 @@ namespace CarSellers.Repository {
             return userFavoriteCar;
         }
 
-        public async Task<AppUserCars> DeleteUserFavoriteCar(AppUserCars userFavoriteCar) {
-            _context.AppUserCars.Remove(userFavoriteCar);
+        public async Task<AppUserCars> DeleteUserFavoriteCar(Car userFavoriteCar) {
+           AppUserCars carToDelete = await _context.AppUserCars.Where(ac=> ac.CarId == userFavoriteCar.CarID).FirstOrDefaultAsync();
+            _context.AppUserCars.Remove(carToDelete);
             await _context.SaveChangesAsync();
-            return userFavoriteCar;
+            return carToDelete;
         }
 
-        public async Task<AppUserCars> GetUserFavoriteCarByCarId(int carId) {
-            return await _context.AppUserCars.Where(p => p.CarId == carId).FirstOrDefaultAsync();
+        public async Task<Car> GetUserFavoriteCarByCarId(int carId) {
+            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.CarId == carId)).Include(c => c.CarModel).FirstOrDefaultAsync();
         }
 
-        public async Task<AppUserCars> GetUserFavoriteCar(string userId, int carId) {
-            return await _context.AppUserCars.Where(uc => uc.AppUserId == userId && uc.CarId == carId).FirstOrDefaultAsync();
+        public async Task<Car> GetUserFavoriteCar(string userId, int carId) {
+            return await _context.AppUserCars.Where(uc => uc.AppUserId == userId && uc.CarId == carId).Select(ac=>ac.Car).Include(c=>c.CarModel).FirstOrDefaultAsync();
 
         }
 
         public async Task<List<Car>> GetUserFavoriteCars(AppUser user) {
-            return await _context.AppUserCars.Where(p => p.AppUserId == user.Id).Select(p => p.Car).ToListAsync();
+            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.AppUserId == user.Id)).Include(c => c.CarModel).Include(c=>c.CarSellerCompany).ToListAsync();
+
         }
 
-        public async Task<AppUserCars> GetUserFavoriteCarByUserId(string userId) {
-            return await _context.AppUserCars.Where(p => p.AppUserId == userId).FirstOrDefaultAsync();
+        public async Task<Car> GetUserFavoriteCarByUserId(string userId) {
+            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.AppUserId == userId)).Include(c => c.CarModel).FirstOrDefaultAsync();
         }
     }
 }

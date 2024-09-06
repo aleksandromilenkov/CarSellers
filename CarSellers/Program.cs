@@ -112,6 +112,7 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwaggerUI();
 }
 
+
 app.UseHttpsRedirection();
 app.UseCors(x => x
     .AllowAnyMethod()
@@ -119,8 +120,8 @@ app.UseCors(x => x
     .AllowCredentials()
     //.WithOrigins("https://localhost:44351)
     .SetIsOriginAllowed(origin => true));
-app.UseAuthentication();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
