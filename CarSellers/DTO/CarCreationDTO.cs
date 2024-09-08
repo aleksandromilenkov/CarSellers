@@ -11,10 +11,10 @@ namespace CarSellers.DTO {
         public decimal Price { get; set; }
         [Required(ErrorMessage = "The Model is required")]
         public int ModelID { get; set; }
-        public CarType CarType { get; set; }
-        public CarColor CarColor { get; set; }
-        public CarOwner CarOwner { get; set; }
-        public CarRegistration CarRegistration { get; set; }
+        public CarType? CarType { get; set; }
+        public CarColor? CarColor { get; set; }
+        public CarOwner? CarOwner { get; set; }
+        public CarRegistration? CarRegistration { get; set; }
         [Required(ErrorMessage = "The Company is required")]
         public int CompanyID { get; set; }
     }
