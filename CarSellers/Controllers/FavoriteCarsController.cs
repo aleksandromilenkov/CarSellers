@@ -72,7 +72,7 @@ namespace CarSellers.Controllers {
 
         [HttpDelete("{carId:int}")]
         [Authorize]
-        public async Task<IActionResult> DeleteUserPortfolio([FromRoute] int carId) {
+        public async Task<IActionResult> DeleteFavoriteCar([FromRoute] int carId) {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }

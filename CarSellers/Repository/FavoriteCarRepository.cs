@@ -24,11 +24,11 @@ namespace CarSellers.Repository {
         }
 
         public async Task<Car> GetUserFavoriteCarByCarId(int carId) {
-            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.CarId == carId)).Include(c => c.CarModel).ThenInclude(cm => cm.Manufacturer).FirstOrDefaultAsync();
+            return await _context.Cars.Where(c => c.UserCars.Any(uc => uc.CarId == carId)).Include(c => c.CarModel).ThenInclude(cm => cm.Manufacturer).Include(c => c.CarSellerCompany).FirstOrDefaultAsync();
         }
 
         public async Task<Car> GetUserFavoriteCar(string userId, int carId) {
-            return await _context.AppUserCars.Where(uc => uc.AppUserId == userId && uc.CarId == carId).Select(ac=>ac.Car).Include(c=>c.CarModel).ThenInclude(cm => cm.Manufacturer).FirstOrDefaultAsync();
+            return await _context.Cars.Where(c=>c.UserCars.Any(uc=>uc.AppUserId == userId && uc.CarId == carId)).Include(c=>c.CarModel).ThenInclude(cm => cm.Manufacturer).Include(c => c.CarSellerCompany).FirstOrDefaultAsync();
 
         }
 
