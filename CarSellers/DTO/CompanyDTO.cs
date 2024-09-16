@@ -5,6 +5,7 @@ namespace CarSellers.DTO {
         public int CompanyID { get; set; }
         public string? CompanyName { get; set; }
         public string? Address { get; set; }
+        public string? TelephoneNumber { get; set; }
         public IEnumerable<Car> Cars { get; set; }
 
     }
