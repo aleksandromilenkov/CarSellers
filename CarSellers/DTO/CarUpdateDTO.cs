@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CarSellers.DTO {
-    public class CarCreationDTO {
+namespace CarSellers.DTO
+{
+    public class CarUpdateDTO
+    {
         [Required(ErrorMessage = "The Year is required")]
         public int Year { get; set; }
         [Required(ErrorMessage = "The Km is required")]
@@ -13,6 +15,7 @@ namespace CarSellers.DTO {
         public decimal Price { get; set; }
         [Required(ErrorMessage = "The Model is required")]
         public int ModelID { get; set; }
+        public string? CarImage { get; set; }
         [NotMapped]
         public IFormFile? ImageFile { get; set; }
         public CarType? CarType { get; set; }

@@ -7,6 +7,7 @@ using CarSellers.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<ICarModelRepository, CarModelRepository>();
 builder.Services.AddScoped<IManufacturerRepository, ManufactorerRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddTransient<IFileService, FileService>();
 builder.Services.AddScoped<IFavoriteCarsRepository, FavoriteCarRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -114,6 +116,12 @@ if (app.Environment.IsDevelopment()) {
 
 
 app.UseHttpsRedirection();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "Uploads")),
+    RequestPath = "/Resources"
+});
 app.UseCors(x => x
     .AllowAnyMethod()
     .AllowAnyHeader()

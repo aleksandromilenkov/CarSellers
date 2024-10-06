@@ -80,6 +80,11 @@ namespace CarSellers.Repository {
             return await _context.Cars.Where(c => c.CarID == id).Include(c => c.CarSellerCompany).Include(c => c.CarModel).ThenInclude(m=>m.Manufacturer).FirstOrDefaultAsync();
         }
 
+        public async Task<Car?> GetCarByIdAsNoTracking(int id)
+        {
+            return await _context.Cars.AsNoTracking().Where(c => c.CarID == id).Include(c => c.CarSellerCompany).Include(c => c.CarModel).ThenInclude(m => m.Manufacturer).FirstOrDefaultAsync();
+        }
+
         public async Task<bool> Save() {
             return await _context.SaveChangesAsync() > 0;
         }

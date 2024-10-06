@@ -1,6 +1,7 @@
 ﻿using CarSellers.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace CarSellers.Model {
     public class Car {
@@ -12,6 +13,7 @@ namespace CarSellers.Model {
         public int CompanyID { get; set; }
         public int Year { get; set; }
         public int Kilometers { get; set; }
+        public string? CarImage { get; set; }
         public CarType? CarType { get; set; }
         public CarColor? CarColor { get; set; }
         public CarRegistration? CarRegistration { get; set; }
