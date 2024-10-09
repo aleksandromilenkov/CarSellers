@@ -54,12 +54,12 @@ namespace CarSellers.Controllers {
         public async Task<IActionResult> CreateCar([FromForm] CarCreationDTO car) {
             try
             {
-                if (car.ImageFile?.Length > 1 * 1024 * 1024)
+                if (car.CarImage?.Length > 1 * 1024 * 1024)
                 {
                     return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
                 }
                 string[] allowedFileExtentions = {".jpg", ".jpeg", ".png"};
-                string createdImageName = await _fileService.SaveFileAsync(car.ImageFile, allowedFileExtentions);
+                string createdImageName = await _fileService.SaveFileAsync(car.CarImage, allowedFileExtentions);
                 if (car == null)
                 {
                     return BadRequest(ModelState);
