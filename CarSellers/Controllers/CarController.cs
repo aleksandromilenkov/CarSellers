@@ -91,52 +91,49 @@ namespace CarSellers.Controllers {
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateCar([FromRoute] int carId, [FromForm] CarUpdateDTO car) {
-            try
-            {
-
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
-            if (car == null) {
-                return BadRequest(ModelState);
-            }
-            if (!await _carRepository.CarExists(carId)) {
-                return NotFound();
-            }
-                var existingCar = await _carRepository.GetCarByIdAsNoTracking(carId);
-                if (existingCar == null)
-                {
-                    return StatusCode(StatusCodes.Status404NotFound, $"Product with id: {carId} does not found");
+            try {
+                if (!ModelState.IsValid) {
+                    return BadRequest(ModelState);
                 }
+
+                if (car == null) {
+                    return BadRequest(ModelState);
+                }
+
+                if (!await _carRepository.CarExists(carId)) {
+                    return NotFound();
+                }
+
+                var existingCar = await _carRepository.GetCarByIdAsNoTracking(carId);
+                if (existingCar == null) {
+                        return StatusCode(StatusCodes.Status404NotFound, $"Product with id: {carId} does not found");
+                }
+
                 string oldImage = existingCar.CarImage;
-                if (car.ImageFile != null)
-                {
-                    if (car.ImageFile?.Length > 1 * 1024 * 1024)
-                    {
+                var carMap = _mapper.Map<Car>(car);
+                carMap.CarID = carId;
+
+                if (car.CarImage != null) {
+                    if (car.CarImage?.Length > 1 * 1024 * 1024) {
                         return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
                     }
                     string[] allowedFileExtentions = { ".jpg", ".jpeg", ".png" };
-                    string createdImageName = await _fileService.SaveFileAsync(car.ImageFile, allowedFileExtentions);
-                    car.CarImage = createdImageName;
+                    string createdImageName = await _fileService.SaveFileAsync(car.CarImage, allowedFileExtentions);
+                    carMap.CarImage = createdImageName;
                 }
 
-                var carMap = _mapper.Map<Car>(car);
-            carMap.CarID = carId;
-            if (!await _carRepository.UpdateCar(carMap)) {
-                return BadRequest(ModelState);
-            }
-                // if image is updated, then we have to delete old image from directory
-                if (car.CarImage != null)
-                    _fileService.DeleteFile(oldImage);
+                if (!await _carRepository.UpdateCar(carMap)) {
+                    return BadRequest(ModelState);
+                }
+                    // if image is updated, then we have to delete old image from directory
+                    if (car.CarImage != null)
+                        _fileService.DeleteFile(oldImage);
 
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-               
+                    return NoContent();
+                }
+            catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
         }
 
 

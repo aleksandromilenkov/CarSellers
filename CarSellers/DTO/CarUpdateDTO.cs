@@ -15,9 +15,8 @@ namespace CarSellers.DTO
         public decimal Price { get; set; }
         [Required(ErrorMessage = "The Model is required")]
         public int ModelID { get; set; }
-        public string? CarImage { get; set; }
         [NotMapped]
-        public IFormFile? ImageFile { get; set; }
+        public IFormFile? CarImage { get; set; }
         public CarType? CarType { get; set; }
         public CarColor? CarColor { get; set; }
         public CarOwner? CarOwner { get; set; }
