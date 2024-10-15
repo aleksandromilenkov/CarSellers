@@ -1,6 +1,7 @@
 ﻿using CarSellers.DTO;
 using CarSellers.Interface;
 using CarSellers.Model;
+using CarSellers.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,16 +16,19 @@ namespace CarSellers.Controllers {
         private readonly ITokenService _tokenService;
         private readonly SignInManager<AppUser> _signinManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IFileService _fileService;
 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager) {
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager, IFileService fileService)
+        {
             _userManager = userManager;
             _tokenService = tokenService;
             _signinManager = signInManager;
             _roleManager = roleManager;
+            this._fileService = fileService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] AccountRegisterDTO registerDTO) {
+        public async Task<IActionResult> Register([FromForm] AccountRegisterDTO registerDTO) {
             try {
                 if (!ModelState.IsValid) {
                     return BadRequest(ModelState);
@@ -39,12 +43,29 @@ namespace CarSellers.Controllers {
                 };
                 var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password);
                 if (createdUser.Succeeded) {
+                    // Save profile picture if it exists
+                    if (registerDTO.ProfilePicture != null)
+                    {
+                        string[] allowedFileExtensions = { ".jpg", ".jpeg", ".png" }; 
+                        try
+                        {
+                            var createdImageName = await _fileService.SaveFileAsync(registerDTO.ProfilePicture, allowedFileExtensions);
+                            appUser.ProfilePicture = createdImageName;
+                        }
+                        catch (Exception ex)
+                        {
+                            return BadRequest($"Error saving profile picture: {ex.Message}");
+                        }
+
+                        await _userManager.UpdateAsync(appUser); // Update user with the profile picture filename
+                    }
                     var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
                     if (roleResult.Succeeded) {
                         return Ok(
                             new AccountReturnDTO {
                                 UserName = appUser.UserName,
                                 Email = appUser.Email,
+                                ProfileImage = appUser.ProfilePicture,
                                 Token = await _tokenService.CreateToken(appUser)
                             }
                         );

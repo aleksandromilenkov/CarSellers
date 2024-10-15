@@ -13,5 +13,7 @@ namespace CarSellers.DTO {
         [MinLength(5, ErrorMessage = "Password must be at least 5 chracters")]
         [MaxLength(35, ErrorMessage = "Password must be maximum 35 characters")]
         public string? Password { get; set; }
+        // Add the profile picture
+        public IFormFile? ProfilePicture { get; set; }
     }
 }
