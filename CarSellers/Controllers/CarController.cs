@@ -54,12 +54,6 @@ namespace CarSellers.Controllers {
         public async Task<IActionResult> CreateCar([FromForm] CarCreationDTO car) {
             try
             {
-                if (car.CarImage?.Length > 1 * 1024 * 1024)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
-                }
-                string[] allowedFileExtentions = {".jpg", ".jpeg", ".png"};
-                string createdImageName = await _fileService.SaveFileAsync(car.CarImage, allowedFileExtentions);
                 if (car == null)
                 {
                     return BadRequest(ModelState);
@@ -68,6 +62,13 @@ namespace CarSellers.Controllers {
                 {
                     return BadRequest(ModelState);
                 }
+                if (car.CarImage?.Length > 1 * 1024 * 1024)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
+                }
+                string[] allowedFileExtentions = {".jpg", ".jpeg", ".png"};
+                string createdImageName = await _fileService.SaveFileAsync(car.CarImage, allowedFileExtentions);
+              
                 Car mappedToCar = _mapper.Map<Car>(car);
                 mappedToCar.CarImage = createdImageName;
                 if (!await _carRepository.CreateCar(mappedToCar))
@@ -109,7 +110,7 @@ namespace CarSellers.Controllers {
                         return StatusCode(StatusCodes.Status404NotFound, $"Product with id: {carId} does not found");
                 }
 
-                string oldImage = existingCar.CarImage;
+                string? oldImage = existingCar?.CarImage;
                 var carMap = _mapper.Map<Car>(car);
                 carMap.CarID = carId;
 
@@ -166,7 +167,7 @@ namespace CarSellers.Controllers {
                     ModelState.AddModelError("", "Something went wrong with the deleting");
                     return StatusCode(500, ModelState);
                 }
-                // After deleting product from database,remove file from directory.
+                // After deleting car from database,remove file from directory.
                 if (car?.CarImage != null)
                 {
                     _fileService.DeleteFile(car.CarImage);

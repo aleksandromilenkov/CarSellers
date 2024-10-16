@@ -2,6 +2,7 @@
 using CarSellers.DTO;
 using CarSellers.Interface;
 using CarSellers.Model;
+using CarSellers.Service;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarSellers.Controllers {
@@ -10,9 +11,11 @@ namespace CarSellers.Controllers {
     public class CarSellerCompanyController : ControllerBase {
         private readonly ICarSellerCompanyRepository _companyRepository;
         private readonly IMapper _mapper;
-        public CarSellerCompanyController(ICarSellerCompanyRepository carSellerCompany, IMapper mapper) {
+        private readonly IFileService _fileService;
+        public CarSellerCompanyController(ICarSellerCompanyRepository carSellerCompany, IMapper mapper, IFileService fileService) {
             this._companyRepository = carSellerCompany;
             this._mapper = mapper;
+            this._fileService = fileService;
         }
 
         [HttpGet]
@@ -63,7 +66,7 @@ namespace CarSellers.Controllers {
         [ProducesResponseType(201, Type = typeof(CompanyDTO))]
         [ProducesResponseType(422)]
         [ProducesResponseType(500)]
-        public async Task<ActionResult<CompanyDTO>> CreateCompany([FromBody] CompanyCreationDTO companyCreate) {
+        public async Task<ActionResult<CompanyDTO>> CreateCompany([FromForm] CompanyCreationDTO companyCreate) {
             if (companyCreate == null) {
                 return BadRequest(ModelState);
             }
@@ -77,6 +80,16 @@ namespace CarSellers.Controllers {
                 return StatusCode(422, ModelState);
             }
             var companyMap = _mapper.Map<CarSellerCompany>(companyCreate);
+            if (companyCreate.CompanyImage != null)
+            {
+                if (companyCreate.CompanyImage?.Length > 1 * 1024 * 1024)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
+                }
+                string[] allowedFileExtentions = { ".jpg", ".jpeg", ".png" };
+                string createdImageName = await _fileService.SaveFileAsync(companyCreate.CompanyImage, allowedFileExtentions);
+                companyMap.CompanyImage = createdImageName;
+            }
             if (!await _companyRepository.CreateCompany(companyMap)) {
                 ModelState.AddModelError("", "Something went wrong while saving");
                 return StatusCode(500, ModelState);
@@ -96,10 +109,23 @@ namespace CarSellers.Controllers {
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
-            if (!await _companyRepository.CompanyExists(companyId)) {
+            var existingCompany =await _companyRepository.GetCompanyById(companyId);
+            if (existingCompany == null) {
                 return NotFound();
             }
+            string? oldImage = existingCompany?.CompanyImage;
             var companyMap = _mapper.Map<CarSellerCompany>(company);
+            if (company.CompanyImage != null)
+            {
+                if (company.CompanyImage?.Length > 1 * 1024 * 1024)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
+                }
+                string[] allowedFileExtentions = { ".jpg", ".jpeg", ".png" };
+                string createdImageName = await _fileService.SaveFileAsync(company.CompanyImage, allowedFileExtentions);
+                companyMap.CompanyImage = createdImageName;
+                if(oldImage != null) _fileService.DeleteFile(oldImage);
+            }
             companyMap.CompanyID = companyId;
             if (!await _companyRepository.UpdateCompany(companyMap)) {
                 return BadRequest(ModelState);
@@ -125,6 +151,10 @@ namespace CarSellers.Controllers {
             if (!await _companyRepository.DeleteCompany(company)) {
                 ModelState.AddModelError("", "Something went wrong with the deleting");
                 return StatusCode(500, ModelState);
+            }
+            if (company?.CompanyImage != null)
+            {
+                _fileService.DeleteFile(company.CompanyImage);
             }
             return Ok("Successfully deleted");
         }

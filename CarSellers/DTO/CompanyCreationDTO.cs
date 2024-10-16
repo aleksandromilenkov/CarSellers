@@ -13,5 +13,6 @@ namespace CarSellers.DTO {
 
         [Phone(ErrorMessage = "Please enter a valid phone number.")]
         public string? TelephoneNumber { get; set; }
+        public IFormFile? CompanyImage { get; set; }
     }
 }

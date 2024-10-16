@@ -140,7 +140,7 @@ namespace CarSellers.Controllers {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Assuming user ID is in claims
             var user = await _userManager.FindByIdAsync(userId);
-            var oldImage = user.ProfilePicture;
+            var oldImage = user?.ProfilePicture;
 
             if (user == null)
             {
@@ -192,7 +192,7 @@ namespace CarSellers.Controllers {
                 {
                     return BadRequest(updatedUser1.Errors);
                 }
-                _fileService.DeleteFile(oldImage);
+                if(oldImage != null) _fileService.DeleteFile(oldImage);
             }
             var updatedUser =await _userManager.FindByNameAsync(user.UserName);
             var userReturnDTO = new UserUpdateReturnDTO

@@ -9,6 +9,7 @@ namespace CarSellers.Model {
         public string? Address { get; set; }
         [Phone(ErrorMessage = "Please enter a valid phone number.")]
         public string? TelephoneNumber { get; set; }
+        public string? CompanyImage { get; set; }
         public IEnumerable<Car> Cars { get; set; }
 
 
