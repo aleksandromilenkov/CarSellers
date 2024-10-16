@@ -44,12 +44,12 @@ namespace CarSellers.Controllers {
                 var createdUser = await _userManager.CreateAsync(appUser, registerDTO.Password);
                 if (createdUser.Succeeded) {
                     // Save profile picture if it exists
-                    if (registerDTO.ProfilePicture != null)
+                    if (registerDTO.ProfileImage != null)
                     {
                         string[] allowedFileExtensions = { ".jpg", ".jpeg", ".png" }; 
                         try
                         {
-                            var createdImageName = await _fileService.SaveFileAsync(registerDTO.ProfilePicture, allowedFileExtensions);
+                            var createdImageName = await _fileService.SaveFileAsync(registerDTO.ProfileImage, allowedFileExtensions);
                             appUser.ProfilePicture = createdImageName;
                         }
                         catch (Exception ex)
@@ -100,10 +100,12 @@ namespace CarSellers.Controllers {
             var userToReturn = new AccountReturnDTO {
                 UserName = user.UserName,
                 Email = user.Email,
-                Token = await _tokenService.CreateToken(user)
+                Token = await _tokenService.CreateToken(user),
+                ProfileImage = user?.ProfilePicture,
             };
             return Ok(userToReturn);
         }
+
         [HttpPost("assignRole")]
         [Authorize]
         public async Task<IActionResult> AssignRole([FromBody] RoleAssignDTO model) {
@@ -126,9 +128,10 @@ namespace CarSellers.Controllers {
 
             return Ok("Role assigned successfully");
         }
+
         [HttpPatch("update")]
         [Authorize]
-        public async Task<IActionResult> UpdateUser([FromBody] UserUpdateDTO updateUserDto)
+        public async Task<IActionResult> UpdateUser([FromForm] UserUpdateDTO updateUserDto)
         {
             if (updateUserDto == null)
             {
@@ -137,6 +140,7 @@ namespace CarSellers.Controllers {
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Assuming user ID is in claims
             var user = await _userManager.FindByIdAsync(userId);
+            var oldImage = user.ProfilePicture;
 
             if (user == null)
             {
@@ -172,11 +176,30 @@ namespace CarSellers.Controllers {
                     return BadRequest(passwordChangeResult.Errors);
                 }
             }
-           var updatedUser =await  _userManager.FindByNameAsync(user.UserName);
+
+            // Update profile image if provided
+            if (updateUserDto.ProfileImage != null)
+            {
+                if (updateUserDto.ProfileImage?.Length > 1 * 1024 * 1024)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
+                }
+                string[] allowedFileExtentions = { ".jpg", ".jpeg", ".png" };
+                string createdImageName = await _fileService.SaveFileAsync(updateUserDto.ProfileImage, allowedFileExtentions);
+                user.ProfilePicture = createdImageName;
+                var updatedUser1 = await _userManager.UpdateAsync(user);
+                if (!updatedUser1.Succeeded)
+                {
+                    return BadRequest(updatedUser1.Errors);
+                }
+                _fileService.DeleteFile(oldImage);
+            }
+            var updatedUser =await _userManager.FindByNameAsync(user.UserName);
             var userReturnDTO = new UserUpdateReturnDTO
             {
                 Username = updatedUser.UserName,
                 Email = updatedUser.Email,
+                ProfileImage = updatedUser.ProfilePicture,
             };
             return Ok(userReturnDTO);
         }
