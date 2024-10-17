@@ -4,7 +4,8 @@ using CarSellers.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace CarSellers.Repository {
-    public class CarSellerCompanyRepository : ICarSellerCompanyRepository {
+    public class CarSellerCompanyRepository : ICarSellerCompanyRepository
+    {
         private readonly DataContext _context;
         public CarSellerCompanyRepository(DataContext context) {
             _context = context;
@@ -34,6 +35,11 @@ namespace CarSellers.Repository {
 
         public async Task<CarSellerCompany?> GetCompanyById(int id) {
             return await _context.CarSellerCompanies.Include(c => c.Cars).ThenInclude(c => c.CarModel).ThenInclude(c => c.Manufacturer).FirstOrDefaultAsync(csc => csc.CompanyID == id);
+        }
+
+        public async Task<CarSellerCompany?> GetCompanyByIdAsNoTracking(int id)
+        {
+            return await _context.CarSellerCompanies.AsNoTracking().Where(c => c.CompanyID == id).FirstOrDefaultAsync();
         }
 
         public async Task<bool> Save() {

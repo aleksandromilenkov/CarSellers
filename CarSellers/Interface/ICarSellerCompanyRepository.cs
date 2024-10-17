@@ -4,6 +4,7 @@ namespace CarSellers.Interface {
     public interface ICarSellerCompanyRepository {
         Task<ICollection<CarSellerCompany>> GetAllCompanies();
         Task<CarSellerCompany?> GetCompanyById(int id);
+        Task<CarSellerCompany?> GetCompanyByIdAsNoTracking(int id);
         Task<ICollection<Car>> GetCarsByCompanyId(int companyId);
         Task<bool> CreateCompany(CarSellerCompany company);
         Task<bool> UpdateCompany(CarSellerCompany company);

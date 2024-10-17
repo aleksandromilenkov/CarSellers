@@ -102,14 +102,14 @@ namespace CarSellers.Controllers {
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateCompany([FromRoute] int companyId, [FromBody] CompanyCreationDTO company) {
+        public async Task<IActionResult> UpdateCompany([FromRoute] int companyId, [FromForm] CompanyCreationDTO company) {
             if (company == null) {
                 return BadRequest(ModelState);
             }
             if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
-            var existingCompany =await _companyRepository.GetCompanyById(companyId);
+            var existingCompany =await _companyRepository.GetCompanyByIdAsNoTracking(companyId);
             if (existingCompany == null) {
                 return NotFound();
             }
@@ -125,6 +125,9 @@ namespace CarSellers.Controllers {
                 string createdImageName = await _fileService.SaveFileAsync(company.CompanyImage, allowedFileExtentions);
                 companyMap.CompanyImage = createdImageName;
                 if(oldImage != null) _fileService.DeleteFile(oldImage);
+            } else
+            {
+                companyMap.CompanyImage = oldImage;
             }
             companyMap.CompanyID = companyId;
             if (!await _companyRepository.UpdateCompany(companyMap)) {
