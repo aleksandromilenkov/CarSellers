@@ -121,15 +121,15 @@ namespace CarSellers.Controllers {
                     string[] allowedFileExtentions = { ".jpg", ".jpeg", ".png" };
                     string createdImageName = await _fileService.SaveFileAsync(car.CarImage, allowedFileExtentions);
                     carMap.CarImage = createdImageName;
+                    if(oldImage != null) _fileService.DeleteFile(oldImage);
+                } else
+                {
+                    carMap.CarImage = oldImage;
                 }
 
                 if (!await _carRepository.UpdateCar(carMap)) {
                     return BadRequest(ModelState);
                 }
-                    // if image is updated, then we have to delete old image from directory
-                    if (car.CarImage != null)
-                        _fileService.DeleteFile(oldImage);
-
                     return NoContent();
                 }
             catch (Exception ex) {
