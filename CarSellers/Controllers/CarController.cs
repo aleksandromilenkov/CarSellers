@@ -54,25 +54,26 @@ namespace CarSellers.Controllers {
         public async Task<IActionResult> CreateCar([FromForm] CarCreationDTO car) {
             try
             {
-                if (car == null)
-                {
+                if (car == null) {
                     return BadRequest(ModelState);
                 }
-                if (!ModelState.IsValid)
-                {
+
+                if (!ModelState.IsValid) {
                     return BadRequest(ModelState);
                 }
-                if (car.CarImage?.Length > 1 * 1024 * 1024)
-                {
-                    return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
-                }
-                string[] allowedFileExtentions = {".jpg", ".jpeg", ".png"};
-                string createdImageName = await _fileService.SaveFileAsync(car.CarImage, allowedFileExtentions);
-              
+
                 Car mappedToCar = _mapper.Map<Car>(car);
-                mappedToCar.CarImage = createdImageName;
-                if (!await _carRepository.CreateCar(mappedToCar))
-                {
+
+                if(car.CarImage != null) {
+                    if (car.CarImage?.Length > 1 * 1024 * 1024) {
+                        return StatusCode(StatusCodes.Status400BadRequest, "File size should not exceed 1 MB");
+                    }
+                    string[] allowedFileExtentions = {".jpg", ".jpeg", ".png"};
+                    string createdImageName = await _fileService.SaveFileAsync(car.CarImage, allowedFileExtentions);
+                    mappedToCar.CarImage = createdImageName;
+                }
+
+                if (!await _carRepository.CreateCar(mappedToCar)) {
                     ModelState.AddModelError("", "Something went wrong while saving");
                     return StatusCode(500, ModelState);
                 }
@@ -80,8 +81,7 @@ namespace CarSellers.Controllers {
                 CarDTO carToReturn = _mapper.Map<CarDTO>(mappedToCar);
                 return CreatedAtRoute("GetCar", new { carId = carToReturn.CarID }, carToReturn);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
