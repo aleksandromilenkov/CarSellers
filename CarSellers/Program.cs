@@ -24,6 +24,7 @@ builder.Services.AddScoped<ICarModelRepository, CarModelRepository>();
 builder.Services.AddScoped<IManufacturerRepository, ManufactorerRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddTransient<IFileService, FileService>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddScoped<IFavoriteCarsRepository, FavoriteCarRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -71,7 +72,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options => {
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequiredLength = 6;
-}).AddEntityFrameworkStores<DataContext>();
+    options.Tokens.PasswordResetTokenProvider = TokenOptions.DefaultProvider;
+}).AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options => {
     options.DefaultAuthenticateScheme =

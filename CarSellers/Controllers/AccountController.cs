@@ -5,8 +5,11 @@ using CarSellers.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Security.Claims;
+using System.Text;
 
 namespace CarSellers.Controllers {
     [Route("api/[controller]")]
@@ -17,13 +20,15 @@ namespace CarSellers.Controllers {
         private readonly SignInManager<AppUser> _signinManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IFileService _fileService;
+        private readonly IEmailSender _emailSender;
 
-        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager, IFileService fileService)
+        public AccountController(UserManager<AppUser> userManager, ITokenService tokenService, SignInManager<AppUser> signInManager, RoleManager<IdentityRole> roleManager, IFileService fileService, IEmailSender emailSender)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _signinManager = signInManager;
             _roleManager = roleManager;
+            _emailSender = emailSender;
             this._fileService = fileService;
         }
 
@@ -202,6 +207,49 @@ namespace CarSellers.Controllers {
                 ProfileImage = updatedUser.ProfilePicture,
             };
             return Ok(userReturnDTO);
+        }
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequestDTO request)
+        {
+            try { 
+                var user = await _userManager.FindByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    return BadRequest("User with this email does not exist.");
+                }
+
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+                var resetLink = $"localhost:3000/reset-password?token={encodedToken}&email={request.Email}";
+
+                // Send the reset link via email (this is just a placeholder for email logic)
+                await _emailSender.SendEmailAsync(request.Email, "<p> Password Reset", $"Reset your password <a href={resetLink} target=\"_blank\"> HERE </a> </p>");
+
+                return Ok("Password reset link has been sent to your email.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return BadRequest("Invalid email.");
+            }
+            var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(request.Token));
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
+            if (!resetPassResult.Succeeded)
+            {
+                return BadRequest(resetPassResult.Errors);
+            }
+
+            return Ok("Password has been reset successfully.");
         }
     }
 }
