@@ -224,7 +224,7 @@ namespace CarSellers.Controllers {
                 var resetLink = $"localhost:3000/reset-password?token={encodedToken}&email={request.Email}";
 
                 // Send the reset link via email (this is just a placeholder for email logic)
-                await _emailSender.SendEmailAsync(request.Email, "<p> Password Reset", $"Reset your password <a href={resetLink} target=\"_blank\"> HERE </a> </p>");
+                await _emailSender.SendEmailAsync(request.Email, "<p> Password Reset", $"Reset your password <a href={resetLink}> HERE </a> </p>");
 
                 return Ok("Password reset link has been sent to your email.");
             }

@@ -4,6 +4,7 @@ using CarSellers.Interface;
 using CarSellers.Model;
 using CarSellers.Repository;
 using CarSellers.Service;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,9 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
+
+// Load environment variables from the .env file
+Env.Load(); // Load the environment variables
 
 // Add services to the container.
 
