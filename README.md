@@ -57,6 +57,13 @@ This is an ASP.NET Web API project built with .NET 6.0, designed for managing a 
    git clone https://your-repo-url.git
    cd your-repo-folder
 
+   ### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://your-repo-url.git
+   cd your-repo-folder
+
 2. Restore the packages:
 
 ```bash
