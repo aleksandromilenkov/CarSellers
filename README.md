@@ -57,32 +57,33 @@ This is an ASP.NET Web API project built with .NET 6.0, designed for managing a 
    git clone https://your-repo-url.git
    cd your-repo-folder
 
-Restore the packages:
+2. Restore the packages:
 
-bash
+```bash
 dotnet restore
-Update the database connection string in your appsettings.json file.
 
-Apply the migrations:
+3. Update the database connection string in your appsettings.json file.
 
-bash
+4. Apply the migrations:
+
+```bash
 dotnet ef database update
-Run the application:
 
-bash
+5. Run the application:
+
+```bash
 dotnet run
-API Documentation
+
+###  API Documentation
 The API is documented using Swagger. You can access the documentation at:
 
-bash
+```bash
 http://localhost:5000/swagger
 
-Contributing
+### Contributing
 If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
 
-License
+### License
 This project is licensed under the MIT License.
-
-sql
 
 Feel free to customize any sections as needed or add more details!
