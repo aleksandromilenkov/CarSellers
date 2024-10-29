@@ -72,7 +72,7 @@ This is an ASP.NET Web API project built with .NET 6.0, designed for managing a 
 
 4. Apply the migrations:
    ```bash
-  dotnet ef database update
+   dotnet ef database update
 
 
 
@@ -86,11 +86,8 @@ The API is documented using Swagger. You can access the documentation at:
 ```bash
 http://localhost:5000/swagger
 
-
-###  API Documentation
+Contributing
 If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
 
-### License
-This project is licensed under the MIT License.
 
-Feel free to customize any sections as needed or add more details!
+
