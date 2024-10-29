@@ -83,10 +83,11 @@ This is an ASP.NET Web API project built with .NET 6.0, designed for managing a 
 ###  API Documentation
 The API is documented using Swagger. You can access the documentation at:
 
-```bash
-http://localhost:5000/swagger
+  ```bash
+  http://localhost:5000/swagger
 
-Contributing
+
+### Contributing
 If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
 
 
