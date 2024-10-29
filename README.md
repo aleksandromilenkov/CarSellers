@@ -59,27 +59,26 @@ This is an ASP.NET Web API project built with .NET 6.0, designed for managing a 
 
    ### Installation
 
-1. Clone the repository:
+2. Restore the packages:
    ```bash
    git clone https://your-repo-url.git
    cd your-repo-folder
 
-2. Restore the packages:
 
-```bash
-dotnet restore
 
-3. Update the database connection string in your appsettings.json file.
+3. Update the database connection string in your appsettings.json file
+
+
 
 4. Apply the migrations:
+   ```bash
+  dotnet ef database update
 
-```bash
-dotnet ef database update
+
 
 5. Run the application:
-
-```bash
-dotnet run
+   ```bash
+   dotnet run
 
 ###  API Documentation
 The API is documented using Swagger. You can access the documentation at:
@@ -87,7 +86,8 @@ The API is documented using Swagger. You can access the documentation at:
 ```bash
 http://localhost:5000/swagger
 
-### Contributing
+
+###  API Documentation
 If you'd like to contribute to this project, please fork the repository and submit a pull request with your changes.
 
 ### License
