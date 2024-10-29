@@ -12,7 +12,7 @@ This is an ASP.NET Web API project built with .NET 6.0, designed for managing a 
   - Password reset and recovery
 
 - **Car Management**
-  - CRUD operations for cars, companies, car models and manufacturers
+  - CRUD operations for users, cars, companies, car models and manufacturers
   - Admin users can edit and delete cars, companies, manufacturers and car models
   - Regular users can add or remove cars from their favorites
   - Search for cars without logging in
