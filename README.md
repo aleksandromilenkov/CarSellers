@@ -3,7 +3,7 @@
 ## Overview
 
 This is an ASP.NET Web API project built with .NET 6.0, designed for managing a car marketplace. The API provides various functionalities for users and admins, including user authentication, car management, and image uploads.
-This is the Frontend for this API :[ ****
+[ ****
 This is the Frontend of this API: ](https://github.com/aleksandromilenkov/CarSellersClient)
 ## Features
 
